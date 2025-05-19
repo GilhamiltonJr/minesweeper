@@ -29,6 +29,27 @@ public class Minefield {
 			}
 		}
 	}
+	public int getNeighborsCount(int x, int y) {
+		int count = 0;
+		
+		for(int r = -1; r <= 1; r ++) {
+			for(int c = -1; c<= 1; c++) {
+				if(r == c && c == 0) {
+					continue;
+				}
+				int neighborX = x + c;
+				int neighborY = y + r;
+				if((neighborX < 0 || neighborX >= width || neighborY < 0 || neighborY >= height)) {
+					continue;
+				}
+				if(getSquare(neighborX, neighborY).isBombSquare()) {
+					count++;
+				}
+			}
+		}
+		
+		return count;
+	}
 	
 	public int getWidth() {
 		return width;
