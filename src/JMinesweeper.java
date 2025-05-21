@@ -7,7 +7,14 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 public class JMinesweeper {
+	JPanel mainPanel;
+	JMinefield minefield;
+	
 	public static void main(String args[]) {
+		new JMinesweeper();
+	}
+	
+	public JMinesweeper() {
 		try {
 			//UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
 			//UIManager.setLookAndFeel("");
@@ -15,23 +22,28 @@ public class JMinesweeper {
 			//
 		}
 		JFrame frame = new JFrame("Minesweeper");
-		JPanel mainPanel = new JPanel(new BorderLayout());
+		mainPanel = new JPanel(new BorderLayout());
 		JToolBar toolBar = new JToolBar();
 		toolBar.add(new AbstractAction("New Game") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("new game pressed");
-				
+				newGame();
 			}
 		});
 		mainPanel.add(toolBar, BorderLayout.NORTH);
-		
-		mainPanel.add(new JMinefield(new Minefield(16,16,40)), BorderLayout.CENTER);
+		newGame();
 		frame.getContentPane().add(mainPanel);
 		frame.pack();
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
-	
+	public void newGame() {
+		if(minefield != null) {
+			mainPanel.remove(minefield);
+		}
+		minefield = new JMinefield(new Minefield(16,16,40));
+		mainPanel.add(minefield, BorderLayout.CENTER);
+		mainPanel.revalidate();
+	}
 }
