@@ -9,6 +9,7 @@ public class Square {
 	
 	public Square(boolean bombSquare) {
 		this.bombSquare = bombSquare;
+		//this.isRevealed = true;
 	}
 
 	public boolean isBombSquare() {
