@@ -42,7 +42,7 @@ public class JMinesweeper {
 		if(minefield != null) {
 			mainPanel.remove(minefield);
 		}
-		minefield = new JMinefield(new Minefield(16,16,40));
+		minefield = new JMinefield(new Minefield(20,20,38));
 		mainPanel.add(minefield, BorderLayout.CENTER);
 		mainPanel.revalidate();
 	}

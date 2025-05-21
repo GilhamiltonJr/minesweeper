@@ -81,7 +81,7 @@ public class JMinefield extends JPanel{
 			for(int x = 0; x < minefield.getWidth(); x++) {
 				JButton b = buttons[x][y];
 				if(minefield.getSquare(x, y).isRevealed()) {
-					if(minefield.getNeighborsCount(x, y) == 0) {
+					if(minefield.getNeighborsCount(x, y) == 0 && !minefield.getSquare(x, y).isBombSquare()) {
 						b.setEnabled(false);
 					}
 						
