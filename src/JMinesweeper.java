@@ -5,6 +5,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.UIManager;
 
 public class JMinesweeper {
 	JPanel mainPanel;
@@ -42,7 +43,7 @@ public class JMinesweeper {
 		if(minefield != null) {
 			mainPanel.remove(minefield);
 		}
-		minefield = new JMinefield(new Minefield(20,20,38));
+		minefield = new JMinefield(new Minefield(20,20,48));//20,20,38
 		mainPanel.add(minefield, BorderLayout.CENTER);
 		mainPanel.revalidate();
 	}

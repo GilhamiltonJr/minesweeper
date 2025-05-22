@@ -43,6 +43,28 @@ public class Minefield {
 		return count;
 	}
 	
+	public int getNeighborsFlagCount(int x, int y) {
+		int count = 0;
+		
+		for(int r = -1; r <= 1; r ++) {
+			for(int c = -1; c<= 1; c++) {
+				if(r == c && c == 0) {
+					continue;
+				}
+				int neighborX = x + c;
+				int neighborY = y + r;
+				if((neighborX < 0 || neighborX >= width || neighborY < 0 || neighborY >= height)) {
+					continue;
+				}
+				if(getSquare(neighborX, neighborY).isFlagged()) {
+					count++;
+				}
+			}
+		}
+		
+		return count;
+	}
+	
 	public int getWidth() {
 		return width;
 	}
@@ -76,7 +98,21 @@ public class Minefield {
 			for(int r = -1; r <= 1; r ++) {
 				for(int c = -1; c <= 1; c++) {
 					if(r != 0 || c != 0) {
-						reveal(x+r, y+c);
+						doReveal(x+r, y+c);
+					}
+				}
+			}
+		}
+	}
+	public void choord(int  x, int y) {
+		//reveal all adjecent tiles that arent flaged reguardless of if they are bombs or not
+		//getSquare(x-1,y).setFlagged(true);
+		if(getNeighborsFlagCount(x,y) == getNeighborsCount(x,y)) {
+			for(int r = -1; r <= 1; r++) {
+				for(int c= -1; c <= 1; c ++) {
+					if(r != 0 || c != 0) {
+						//getSquare(x,y).setRevealed(true);
+						//gameUpdated();
 					}
 				}
 			}
