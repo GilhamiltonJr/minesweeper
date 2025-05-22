@@ -7,6 +7,7 @@ public class Minefield {
 	private final int height;
 	private final int mines;
 	private final List<GameListener> gameListeners;
+	private boolean isGameOver = false;
 	
 	public Minefield(int width, int height, int mines) {
 		
@@ -14,6 +15,7 @@ public class Minefield {
 		this.width = width;
 		this.height = height;
 		this.mines = mines;
+		this.isGameOver = isGameOver;
 		this.gameListeners = new ArrayList<>();
 		
 		for(int i = 0; i < width*height; i++) {
@@ -74,8 +76,10 @@ public class Minefield {
 	}
 	
 	public void reveal(int x, int y) {
-		doReveal(x,y);
-		gameUpdated();
+		if(!isGameOver) {
+			doReveal(x,y);
+			gameUpdated();
+		}
 	}
 	
 	private void doReveal(int x, int y) {
@@ -91,7 +95,7 @@ public class Minefield {
 		square.setRevealed(true);
 		
 		if(square.isBombSquare()) {
-			//TODO game over
+			isGameOver = true;
 			return;
 		}
 		if(getNeighborsCount(x,y) == 0) {
@@ -146,5 +150,8 @@ public class Minefield {
 		for(GameListener l : gameListeners) {
 			l.update();
 		}
+	}
+	public boolean getIsGameOver() {
+		return isGameOver;
 	}
 }

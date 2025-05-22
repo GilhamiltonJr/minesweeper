@@ -8,9 +8,10 @@ import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class JMinefield extends JPanel{
+public class JMinefield extends JPanel implements MouseListener{
 	
 	private final JButton[][] buttons;
 	private final Minefield minefield;
@@ -25,8 +26,6 @@ public class JMinefield extends JPanel{
 		
 		for(int y = 0; y < minefield.getHeight(); y ++) {
 			for(int x = 0; x < minefield.getWidth(); x++) {
-				final int finalX = x;
-				final int finalY = y;
 				JButton b = new JButton("");
 //				b.addActionListener(new ActionListener() {
 //					@Override
@@ -41,41 +40,7 @@ public class JMinefield extends JPanel{
 //						}
 //					}});
 				
-				b.addMouseListener(new MouseListener() {
-					@Override
-					public void mousePressed(MouseEvent e) {
-					
-					}
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						if(e.getButton() == MouseEvent.BUTTON3/*right click */) {
-							Square square = minefield.getSquare(finalX, finalY);
-							if(!square.isRevealed()) {
-								square.setFlagged(!square.isFlagged());
-								updateButtons();
-							}
-						} else if (e.getButton() == MouseEvent.BUTTON1){
-							if(firstClick[0]) {
-								minefield.firstReveal(finalX, finalY);
-								firstClick[0] = false;
-							} else if (minefield.getSquare(finalX, finalY).isRevealed() && minefield.getNeighborsCount(finalX, finalY) > 0){
-								minefield.choord(finalX, finalY);
-							} else {
-								minefield.reveal(finalX, finalY);
-							}
-						}
-					}
-					@Override
-					public void mouseReleased(MouseEvent e) {
-					}
-					@Override
-					public void mouseEntered(MouseEvent e) {
-					}
-					@Override
-					public void mouseExited(MouseEvent e) {
-					}
-
-				});
+				b.addMouseListener(this);
 				b.setPreferredSize(new Dimension(20, 20));
 				add(b);
 				buttons[x][y] = b;
@@ -87,6 +52,9 @@ public class JMinefield extends JPanel{
 			@Override
 			public void update() {
 				updateButtons();
+				if(minefield.getIsGameOver()) {
+					JOptionPane.showMessageDialog(null, "Game Over!");
+				}
 			}
 		});
 	}
@@ -134,18 +102,12 @@ public class JMinefield extends JPanel{
 						b.setForeground(Color.BLACK);
 						b.setBackground(Color.decode("#c7c7c7"));
 						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
+						//end game
 					} else if (count > 0){                                    //NOT BOMB
 						b.setText("" + count);
 						b.setForeground(getTextColorForNeighborCount(count));
 						b.setBackground(Color.decode("#c7c7c7"));
 						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
-					} else if (minefield.getSquare(x, y).isRevealed()){
-						//huh
-					} else {
-						//b5b5b5
-						b.setBackground(Color.decode("#c7c7c7"));
-						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 10));
-						System.out.println("efw");
 					}
 					
 					
@@ -163,6 +125,47 @@ public class JMinefield extends JPanel{
 				
 			}
 		}
+	}
+	public void mousePressed(MouseEvent e) {
+		
+	}
+	
+	public void mouseClicked(MouseEvent e) {
+		if(!minefield.getIsGameOver()) {
+			
+			for(int y = 0; y < minefield.getHeight(); y++) {
+				for(int x = 0; x < minefield.getWidth(); x++) {
+					if(buttons[x][y] == e.getSource()) {
+						Square square = minefield.getSquare(x, y);
+						if(e.getButton() == MouseEvent.BUTTON3/*right click */) {
+							if(!square.isRevealed()) {
+								square.setFlagged(!square.isFlagged());
+								updateButtons();
+							}
+						} else if (e.getButton() == MouseEvent.BUTTON1){
+							if(firstClick[0]) {
+								minefield.firstReveal(x, y);
+								firstClick[0] = false;
+							} else if (minefield.getSquare(x, y).isRevealed() && minefield.getNeighborsCount(x, y) > 0){
+								minefield.choord(x, y);
+							} else {
+								minefield.reveal(x, y);
+							}
+						}
+					}
+				}
+			}
+			
+		}
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+	}
+	
+	public void mouseEntered(MouseEvent e) {
+	}
+	
+	public void mouseExited(MouseEvent e) {
 	}
 	
 }
