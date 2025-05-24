@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
@@ -10,18 +11,13 @@ import javax.swing.UIManager;
 public class JMinesweeper {
 	JPanel mainPanel;
 	JMinefield minefield;
+	JLabel mineCountLabel = new JLabel("");
 	
 	public static void main(String args[]) {
 		new JMinesweeper();
 	}
 	
 	public JMinesweeper() {
-		try {
-			//UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-			//UIManager.setLookAndFeel("");
-		} catch (Exception ignored) {
-			//
-		}
 		JFrame frame = new JFrame("Minesweeper");
 		mainPanel = new JPanel(new BorderLayout());
 		JToolBar toolBar = new JToolBar();
@@ -31,7 +27,9 @@ public class JMinesweeper {
 				newGame();
 			}
 		});
+		toolBar.add(mineCountLabel);
 		mainPanel.add(toolBar, BorderLayout.NORTH);
+		toolBar.setFloatable(false);
 		newGame();
 		frame.getContentPane().add(mainPanel);
 		frame.pack();
@@ -43,7 +41,14 @@ public class JMinesweeper {
 		if(minefield != null) {
 			mainPanel.remove(minefield);
 		}
-		minefield = new JMinefield(new Minefield(20,20,38));//20,20,38
+		Minefield m = new Minefield(30,16,99);
+		m.addGameListener(new GameListener() {
+			@Override
+			public void update() {
+				mineCountLabel.setText(m.getFlaggedMineCount() + " / " + m.getMineCount());
+			}
+		});
+		minefield = new JMinefield(m, 60);//20,20,38 for easy, 30,16,99 for hard
 		mainPanel.add(minefield, BorderLayout.CENTER);
 		mainPanel.revalidate();
 	}

@@ -2,12 +2,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Minefield {
-	private final List<Square> squares;
-	private final int width;
-	private final int height;
-	private final int mines;
-	private final List<GameListener> gameListeners;
-	private boolean isGameOver = false;
+	private List<Square> squares;
+	private int width;
+	private int height;
+	private int mines;
+	private List<GameListener> gameListeners;
+	private boolean isGameOver;
+	private int flaggedMines;
+	private int unrevealedSquares;
+	
 	
 	public Minefield(int width, int height, int mines) {
 		
@@ -15,7 +18,9 @@ public class Minefield {
 		this.width = width;
 		this.height = height;
 		this.mines = mines;
-		this.isGameOver = isGameOver;
+		this.flaggedMines = 0;
+		this.unrevealedSquares = width*height;
+		this.isGameOver = false;
 		this.gameListeners = new ArrayList<>();
 		
 		for(int i = 0; i < width*height; i++) {
@@ -93,6 +98,8 @@ public class Minefield {
 		}
 		
 		square.setRevealed(true);
+		unrevealedSquares--;
+		//System.out.println(unrevealedSquares + "");
 		
 		if(square.isBombSquare()) {
 			isGameOver = true;
@@ -115,12 +122,15 @@ public class Minefield {
 			for(int r = -1; r <= 1; r++) {
 				for(int c= -1; c <= 1; c ++) {
 					if(r != 0 || c != 0) {
-						//getSquare(x,y).setRevealed(true);
-						//gameUpdated();
+						//System.out.println("choord");
+//						getSquare(x+r,y+c).setRevealed(true);
+//						gameUpdated();
+						doReveal(x+r,y+c);
 					}
 				}
 			}
 		}
+		gameUpdated();
 	}
 	
 	public void firstReveal(int x, int y) {
@@ -153,5 +163,30 @@ public class Minefield {
 	}
 	public boolean getIsGameOver() {
 		return isGameOver;
+	}
+	public boolean isGameWon() {
+		return(unrevealedSquares == mines && !isGameOver);
+	}
+ 	public int getFlaggedMineCount() {
+		return flaggedMines;
+	}
+	public int getMineCount() {
+		return mines;
+	}
+	public int getUnrevealedSquares() {
+		return unrevealedSquares;
+	}
+	public void setGameOver(boolean state) {
+		this.isGameOver = state;
+	}
+
+	public void setFlagged(int x, int y, boolean flagged) {
+		getSquare(x, y).setFlagged(flagged);
+		if(flagged) {
+			flaggedMines++;
+		} else {
+			flaggedMines--;
+		}
+		gameUpdated();
 	}
 }

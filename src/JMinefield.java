@@ -13,35 +13,25 @@ import javax.swing.JPanel;
 
 public class JMinefield extends JPanel implements MouseListener{
 	
-	private final JButton[][] buttons;
-	private final Minefield minefield;
-	private final boolean[] firstClick = new boolean[] {true};
-	Font font = new Font("Monospaced", Font.BOLD, 20);
+	private JButton[][] buttons;
+	private Minefield minefield;
+	private boolean firstClick = true;
+
+	Font font;
 	
-	public JMinefield(Minefield minefield) {
+	public JMinefield(Minefield minefield, int squareSize) {
+		
+		font = new Font("Monospaced", Font.BOLD, squareSize);
 		this.minefield = minefield;
-		this.font = font;
 		this.setLayout(new GridLayout(minefield.getHeight(), minefield.getWidth()));
 		this.buttons = new JButton[minefield.getWidth()][minefield.getHeight()];
 		
 		for(int y = 0; y < minefield.getHeight(); y ++) {
 			for(int x = 0; x < minefield.getWidth(); x++) {
 				JButton b = new JButton("");
-//				b.addActionListener(new ActionListener() {
-//					@Override
-//					public void actionPerformed(ActionEvent e) {
-//						if(firstClick[0]) {
-//							minefield.firstReveal(finalX, finalY);
-//							firstClick[0] = false;
-//						} else if (minefield.getSquare(finalX, finalY).isRevealed() && minefield.getNeighborsCount(finalX, finalY) > 0){
-//							minefield.choord(finalX, finalY);
-//						} else {
-//							minefield.reveal(finalX, finalY);
-//						}
-//					}});
 				
 				b.addMouseListener(this);
-				b.setPreferredSize(new Dimension(20, 20));
+				b.setPreferredSize(new Dimension(squareSize, squareSize));
 				add(b);
 				buttons[x][y] = b;
 			}
@@ -52,8 +42,14 @@ public class JMinefield extends JPanel implements MouseListener{
 			@Override
 			public void update() {
 				updateButtons();
-				if(minefield.getIsGameOver()) {
+				if(minefield.isGameWon()) {
+					minefield.setGameOver(true);
+					JOptionPane.showMessageDialog(null, "You Win!");
+				}
+				else if(minefield.getIsGameOver()) {
 					JOptionPane.showMessageDialog(null, "Game Over!");
+				//} else if(minefield.getFlaggedMineCount() == minefield.getMineCount()) {
+				//	System.out.println("Game Won");
 				}
 			}
 		});
@@ -105,6 +101,7 @@ public class JMinefield extends JPanel implements MouseListener{
 						//end game
 					} else if (count > 0){                                    //NOT BOMB
 						b.setText("" + count);
+						
 						b.setForeground(getTextColorForNeighborCount(count));
 						b.setBackground(Color.decode("#c7c7c7"));
 						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
@@ -117,18 +114,18 @@ public class JMinefield extends JPanel implements MouseListener{
 					b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
 				}
 				
-				b.setMargin( new Insets(1, 1, 1, 1) );
+				b.setMargin(new Insets(1, 1, 1, 1));
 				b.setFont(font);
 				b.setContentAreaFilled(true);
 				b.setBorderPainted(true);
 				b.setFocusPainted(false);
-				
 			}
 		}
 	}
 	public void mousePressed(MouseEvent e) {
 		
 	}
+	
 	
 	public void mouseClicked(MouseEvent e) {
 		if(!minefield.getIsGameOver()) {
@@ -139,13 +136,16 @@ public class JMinefield extends JPanel implements MouseListener{
 						Square square = minefield.getSquare(x, y);
 						if(e.getButton() == MouseEvent.BUTTON3/*right click */) {
 							if(!square.isRevealed()) {
-								square.setFlagged(!square.isFlagged());
-								updateButtons();
+								if(square.isFlagged()) {
+									minefield.setFlagged(x, y, false);
+								} else {
+									minefield.setFlagged(x, y, true);
+								}
 							}
 						} else if (e.getButton() == MouseEvent.BUTTON1){
-							if(firstClick[0]) {
+							if(firstClick) {
 								minefield.firstReveal(x, y);
-								firstClick[0] = false;
+								firstClick = false;
 							} else if (minefield.getSquare(x, y).isRevealed() && minefield.getNeighborsCount(x, y) > 0){
 								minefield.choord(x, y);
 							} else {
@@ -155,7 +155,6 @@ public class JMinefield extends JPanel implements MouseListener{
 					}
 				}
 			}
-			
 		}
 	}
 	
