@@ -77,48 +77,50 @@ public class JMinefield extends JPanel implements MouseListener{
 			for(int x = 0; x < minefield.getWidth(); x++) {
 				JButton b = buttons[x][y];
 				int count = minefield.getNeighborsCount(x,y);
-				if(minefield.getSquare(x, y).isFlagged()) {
-					b.setText(">");
-					b.setForeground(Color.RED);
-					b.setBackground(Color.decode("#c7c7c7"));
-					b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
-				} else {
-					b.setText("");
-					b.setBackground(Color.decode("#d3d3d3"));
-					b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
-				}
-				if(minefield.getSquare(x, y).isRevealed()) {
-					if(minefield.getNeighborsCount(x, y) == 0 && !minefield.getSquare(x, y).isBombSquare()) {
-						b.setEnabled(false);
-						b.setBackground(Color.decode("#c7c7c7"));
-						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
-					}
-					if(minefield.getSquare(x,y).isBombSquare()) { // BOMB
-						b.setText("#");
-						b.setForeground(Color.BLACK);
-						b.setBackground(Color.decode("#c7c7c7"));
-						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
-						//end game
-					} else if (count > 0){                                    //NOT BOMB
-						b.setText("" + count);
-						
-						b.setForeground(getTextColorForNeighborCount(count));
-						b.setBackground(Color.decode("#c7c7c7"));
-						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
-					}
-					
-					
-					
-				} else {
-					b.setBackground(Color.decode("#d3d3d3"));
-					b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
-				}
+				Square square = minefield.getSquare(x, y);
 				
 				b.setMargin(new Insets(1, 1, 1, 1));
 				b.setFont(font);
 				b.setContentAreaFilled(true);
 				b.setBorderPainted(true);
 				b.setFocusPainted(false);
+				
+				if(!square.isRevealed()) {
+					if(square.isFlagged()) {
+						//flag
+						b.setText(">");
+						b.setForeground(Color.RED);
+					} else if(square.isQuestion()) {
+						//question
+						b.setText("?");
+						b.setForeground(Color.BLACK);
+					} else {
+						//not revealed and blank
+						b.setText("");
+					}
+					b.setBackground(Color.decode("#d3d3d3"));
+					b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
+				} else {
+					b.setBackground(Color.decode("#c7c7c7"));
+					b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
+					
+					if(square.isBombSquare()) {
+						//bomb square
+						b.setText("#");
+						b.setForeground(Color.BLACK);
+						b.setBackground(Color.decode("#c7c7c7"));
+					} else if(count > 0) {
+						//square with number
+						b.setText("" + count);
+						b.setForeground(getTextColorForNeighborCount(count));
+						b.setBackground(Color.decode("#c7c7c7"));
+						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
+					} else {
+						//blank square
+						b.setText("");
+						b.setEnabled(false);
+					}
+				}		
 			}
 		}
 	}
@@ -138,6 +140,9 @@ public class JMinefield extends JPanel implements MouseListener{
 							if(!square.isRevealed()) {
 								if(square.isFlagged()) {
 									minefield.setFlagged(x, y, false);
+									minefield.setQuestion(x,y,true);
+								} else if(square.isQuestion()){
+									minefield.setQuestion(x,y,false);
 								} else {
 									minefield.setFlagged(x, y, true);
 								}

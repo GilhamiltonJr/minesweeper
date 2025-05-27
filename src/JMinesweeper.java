@@ -22,6 +22,8 @@ public class JMinesweeper {
 		mainPanel = new JPanel(new BorderLayout());
 		JToolBar toolBar = new JToolBar();
 		toolBar.add(new AbstractAction("New Game") {
+			
+			//overrides the default action preformed in the anonymous subclass
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				newGame();
@@ -41,14 +43,14 @@ public class JMinesweeper {
 		if(minefield != null) {
 			mainPanel.remove(minefield);
 		}
-		Minefield m = new Minefield(8,8,1);
+		Minefield m = new Minefield(30,16,2);
 		m.addGameListener(new GameListener() {
 			@Override
 			public void update() {
 				mineCountLabel.setText("Mines Flagged: " + m.getFlaggedMineCount() + " / " + m.getMineCount());
 			}
 		});
-		minefield = new JMinefield(m, 60);//8,8,10 for easy, 20,20,38 for medium, 30,16,99 for hard
+		minefield = new JMinefield(m, 40);//8,8,10 for easy, 20,20,38 for medium, 30,16,99 for hard
 		mainPanel.add(minefield, BorderLayout.CENTER);
 		mainPanel.revalidate();
 	}

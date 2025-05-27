@@ -4,11 +4,19 @@ public class Square {
 	private boolean bombSquare;
 	private boolean isRevealed;
 	private boolean isFlagged;
+	private boolean isQuestion;
 	
 	private int adjacentBombs;
 	
 	public Square(boolean bombSquare) {
 		this.bombSquare = bombSquare;
+	}
+	
+	public boolean isQuestion() {
+		return isQuestion;
+	}
+	public void setQuestion(boolean state) {
+		this.isQuestion = state;
 	}
 
 	public boolean isBombSquare() {

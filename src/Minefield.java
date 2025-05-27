@@ -93,7 +93,7 @@ public class Minefield {
 		}
 		Square square = getSquare(x,y);
 		
-		if(square.isRevealed() || square.isFlagged()) {
+		if(square.isRevealed() || square.isFlagged() || square.isQuestion()) {
 			return;
 		}
 		
@@ -178,6 +178,10 @@ public class Minefield {
 	}
 	public void setGameOver(boolean state) {
 		this.isGameOver = state;
+	}
+	public void setQuestion(int x,int y, boolean state) {
+		getSquare(x,y).setQuestion(state);
+		gameUpdated();
 	}
 
 	public void setFlagged(int x, int y, boolean flagged) {
