@@ -43,14 +43,14 @@ public class JMinesweeper {
 		if(minefield != null) {
 			mainPanel.remove(minefield);
 		}
-		Minefield m = new Minefield(30,16,2);
+		Minefield m = new Minefield(20,20,38);
 		m.addGameListener(new GameListener() {
 			@Override
 			public void update() {
 				mineCountLabel.setText("Mines Flagged: " + m.getFlaggedMineCount() + " / " + m.getMineCount());
 			}
 		});
-		minefield = new JMinefield(m, 40);//8,8,10 for easy, 20,20,38 for medium, 30,16,99 for hard
+		minefield = new JMinefield(m, 50);//8,8,10 for easy, 20,20,38 for medium, 30,16,99 for hard
 		mainPanel.add(minefield, BorderLayout.CENTER);
 		mainPanel.revalidate();
 	}

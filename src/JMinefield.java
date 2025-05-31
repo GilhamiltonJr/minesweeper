@@ -16,12 +16,11 @@ public class JMinefield extends JPanel implements MouseListener{
 	private JButton[][] buttons;
 	private Minefield minefield;
 	private boolean firstClick = true;
-
 	Font font;
 	
 	public JMinefield(Minefield minefield, int squareSize) {
 		
-		font = new Font("Monospaced", Font.BOLD, squareSize);
+		font = new Font("", Font.BOLD, squareSize);
 		this.minefield = minefield;
 		this.setLayout(new GridLayout(minefield.getHeight(), minefield.getWidth()));
 		this.buttons = new JButton[minefield.getWidth()][minefield.getHeight()];
@@ -80,48 +79,58 @@ public class JMinefield extends JPanel implements MouseListener{
 				Square square = minefield.getSquare(x, y);
 				
 				b.setMargin(new Insets(1, 1, 1, 1));
-				b.setFont(font);
 				b.setContentAreaFilled(true);
 				b.setBorderPainted(true);
 				b.setFocusPainted(false);
-				
-				if(!square.isRevealed()) {
-					if(square.isFlagged()) {
-						//flag
-						b.setText(">");
-						b.setForeground(Color.RED);
-					} else if(square.isQuestion()) {
-						//question
-						b.setText("?");
-						b.setForeground(Color.BLACK);
+				b.setFont(font);
+				if(!minefield.getIsGameOver()) {
+					if(!square.isRevealed()) {
+						if(square.isFlagged()) {
+							//flag
+							b.setText(">");
+							b.setForeground(Color.RED);
+						} else if(square.isQuestion()) {
+							//question
+							b.setText("?");
+							b.setForeground(Color.BLACK);
+						} else {
+							//not revealed and blank
+							b.setText("");
+						}
+						b.setBackground(Color.decode("#d3d3d3"));
+						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
 					} else {
-						//not revealed and blank
-						b.setText("");
-					}
-					b.setBackground(Color.decode("#d3d3d3"));
-					b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
+						b.setBackground(Color.decode("#c7c7c7"));
+						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
+						
+						if(count > 0) {
+							//square with number
+							b.setText("" + count);
+							b.setForeground(getTextColorForNeighborCount(count));
+							b.setBackground(Color.decode("#c7c7c7"));
+							b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
+						} else {
+							//blank square
+							b.setText("");
+							b.setEnabled(false);
+						}
+					}	
+					//ultra hard super top secret mode
+					//b.setText("|");
 				} else {
-					b.setBackground(Color.decode("#c7c7c7"));
-					b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
-					
-					if(square.isBombSquare()) {
-						//bomb square
+					if(square.isBombSquare() && !square.isFlagged()) {
 						b.setText("#");
 						b.setForeground(Color.BLACK);
 						b.setBackground(Color.decode("#c7c7c7"));
-					} else if(count > 0) {
-						//square with number
-						b.setText("" + count);
-						b.setForeground(getTextColorForNeighborCount(count));
-						b.setBackground(Color.decode("#c7c7c7"));
+					} else if(square.isFlagged() && !square.isBombSquare()) {
+						b.setText("X");
+						b.setForeground(Color.RED);
+						b.setBackground(Color.decode("#ffca57"));
 						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
-					} else {
-						//blank square
-						b.setText("");
-						b.setEnabled(false);
 					}
-				}		
+				}
 			}
+			
 		}
 	}
 	public void mousePressed(MouseEvent e) {
