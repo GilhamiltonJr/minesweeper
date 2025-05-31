@@ -34,8 +34,8 @@ public class JMinesweeper {
 		});
 		JComboBox<Difficulty> difficultyBox = new JComboBox<>();
 		difficultyBox.addItem(new Difficulty("Beginner", 9, 9, 10, 70));
-		difficultyBox.addItem(nextDifficulty[0] = new Difficulty("Intermediate", 16, 16, 40, 50));
-		difficultyBox.addItem(new Difficulty("Expert", 30, 16, 99, 40));
+		difficultyBox.addItem(nextDifficulty[0] = new Difficulty("Intermediate", 16, 16, 40, 60));
+		difficultyBox.addItem(new Difficulty("Expert", 30, 16, 99, 50));
 
 		difficultyBox.addItemListener(new ItemListener() {
 			@Override
@@ -60,7 +60,7 @@ public class JMinesweeper {
 		if(minefield != null) {
 			mainPanel.remove(minefield);
 		}
-		Minefield m = new Minefield(nextDifficulty[0].width(),nextDifficulty[0].height(),nextDifficulty[0].mineCount());
+		Minefield m = new Minefield(nextDifficulty[0].width,nextDifficulty[0].height,nextDifficulty[0].mineCount);
 		m.addGameListener(new GameListener() {
 			@Override
 			public void update() {
@@ -73,7 +73,22 @@ public class JMinesweeper {
 		frame.pack();
 	}
 	
-	record Difficulty(String name, int width, int height, int mineCount, int dimension) {
+	private class Difficulty{
+		
+		String name;
+		int width;
+		int height;
+		int mineCount;
+		int dimension;
+		
+		public Difficulty(String name, int width, int height, int mineCount, int dimension){
+			this.name = name;
+			this.width = width;
+			this.height = height;
+			this.mineCount = mineCount;
+			this.dimension = dimension;
+		}
+		
 		@Override
 		public String toString() {
 			return String.format("%s (%dx%d, %d mines)", name, width, height, mineCount);
