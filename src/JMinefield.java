@@ -16,9 +16,13 @@ public class JMinefield extends JPanel implements MouseListener{
 	private JButton[][] buttons;
 	private Minefield minefield;
 	private boolean firstClick = true;
+	private boolean isCrazy;
+	private boolean isReduction;
 	Font font;
 	
 	public JMinefield(Minefield minefield, int squareSize) {
+		
+		
 		
 		font = new Font("", Font.BOLD, squareSize);
 		this.minefield = minefield;
@@ -92,10 +96,11 @@ public class JMinefield extends JPanel implements MouseListener{
 						} else if(square.isQuestion()) {
 							//question
 							b.setText("?");
-							b.setForeground(Color.BLACK);
+							b.setForeground(Color.PINK);
 						} else {
 							//not revealed and blank
 							b.setText("");
+							b.setForeground(Color.BLACK);
 						}
 						b.setBackground(Color.decode("#d3d3d3"));
 						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
@@ -105,7 +110,14 @@ public class JMinefield extends JPanel implements MouseListener{
 						
 						if(count > 0) {
 							//square with number
-							b.setText("" + count);
+							if(isReduction) {
+								b.setText("" + (count - minefield.getNeighborsFlagCount(x,y)));
+							} else {
+								b.setText("" + count);
+							}
+							//setText("" + (count - minefield.getNeighborsFlagCount(x,y)));
+							//ultra top secret mode too
+							
 							b.setForeground(getTextColorForNeighborCount(count));
 							b.setBackground(Color.decode("#c7c7c7"));
 							b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
@@ -116,7 +128,10 @@ public class JMinefield extends JPanel implements MouseListener{
 						}
 					}	
 					//ultra hard super top secret mode
-					//b.setText("|");
+					if(isCrazy) {
+						b.setText(".");
+					}
+					
 				} else {
 					if(square.isBombSquare() && !square.isFlagged()) {
 						b.setText("#");
@@ -179,6 +194,15 @@ public class JMinefield extends JPanel implements MouseListener{
 	}
 	
 	public void mouseExited(MouseEvent e) {
+	}
+	
+	public void setCrazy(boolean state) {
+		isCrazy = state;
+		updateButtons();
+	}
+	public void setReduction(boolean state) {
+		isReduction = state;
+		updateButtons();
 	}
 	
 }

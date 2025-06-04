@@ -15,7 +15,8 @@ public class JMinesweeper {
 	JPanel mainPanel;
 	JMinefield minefield;
 	JLabel mineCountLabel = new JLabel("");
-	Difficulty[] nextDifficulty = new Difficulty[1];
+	final Difficulty[] nextDifficulty = new Difficulty[1];
+	final Gamemode[] gamemode = new Gamemode[1];
 	
 	public static void main(String args[]) {
 		new JMinesweeper();
@@ -33,19 +34,37 @@ public class JMinesweeper {
 			}
 		});
 		JComboBox<Difficulty> difficultyBox = new JComboBox<>();
-		difficultyBox.addItem(new Difficulty("Beginner", 9, 9, 10, 70));
-		difficultyBox.addItem(nextDifficulty[0] = new Difficulty("Intermediate", 16, 16, 40, 60));
+		difficultyBox.addItem(nextDifficulty[0] = new Difficulty("Beginner", 9, 9, 10, 70));
+		difficultyBox.addItem(new Difficulty("Intermediate", 16, 16, 40, 60));
 		difficultyBox.addItem(new Difficulty("Expert", 30, 16, 99, 50));
 
 		difficultyBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				nextDifficulty[0] = (Difficulty) e.getItem();
+				//making it final is necessary so i gotta make it a final array so you can edit the contents still :D
 				newGame();
+				
+			}
+		});
+		
+		JComboBox<Gamemode> gamemodeBox = new JComboBox<>();
+		gamemodeBox.addItem(gamemode[0] = new Gamemode("Default", false, false));
+		gamemodeBox.addItem(new Gamemode("Reduction", true, false));
+		gamemodeBox.addItem(new Gamemode("Crazy", false, true));
+		
+		gamemodeBox.addItemListener(new ItemListener(){
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				gamemode[0] = (Gamemode) e.getItem();
+				//newGame();
+				minefield.setCrazy(gamemode[0].getCrazy());
+				minefield.setReduction(gamemode[0].getReduction());
 			}
 		});
 		
 		toolBar.add(difficultyBox);
+		toolBar.add(gamemodeBox);
 		toolBar.add(mineCountLabel);
 		mainPanel.add(toolBar, BorderLayout.NORTH);
 		toolBar.setFloatable(false);
@@ -61,6 +80,7 @@ public class JMinesweeper {
 			mainPanel.remove(minefield);
 		}
 		Minefield m = new Minefield(nextDifficulty[0].width,nextDifficulty[0].height,nextDifficulty[0].mineCount);
+
 		m.addGameListener(new GameListener() {
 			@Override
 			public void update() {
@@ -68,6 +88,8 @@ public class JMinesweeper {
 			}
 		});
 		minefield = new JMinefield(m, nextDifficulty[0].dimension);//8,8,10 for easy, 20,20,38 for medium, 30,16,99 for hard
+		minefield.setCrazy(gamemode[0].getCrazy());
+		minefield.setReduction(gamemode[0].getReduction());
 		mainPanel.add(minefield, BorderLayout.CENTER);
 		mainPanel.revalidate();
 		frame.pack();
@@ -93,5 +115,31 @@ public class JMinesweeper {
 		public String toString() {
 			return String.format("%s (%dx%d, %d mines)", name, width, height, mineCount);
 		}
+	}
+	
+	private class Gamemode{
+		String name;
+		boolean reduction;
+		boolean crazy;
+		
+		public Gamemode(String name, boolean reduction, boolean crazy) {
+			this.name = name;
+			this.reduction = reduction;
+			this.crazy = crazy;
+			
+		}
+		@Override
+		public String toString() {
+			return(name + " Mode");
+		}
+		public boolean getCrazy() {
+			return crazy;
+		}
+		public boolean getReduction() {
+			return reduction;
+		}
+	}
+	public Gamemode getGamemode(Gamemode gamemode) {
+		return gamemode;
 	}
 }
