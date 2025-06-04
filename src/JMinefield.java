@@ -129,7 +129,7 @@ public class JMinefield extends JPanel implements MouseListener{
 					}	
 					//ultra hard super top secret mode
 					if(isCrazy) {
-						b.setText(".");
+						b.setText("" + (int)(Math.random()*9));
 					}
 					
 				} else {
