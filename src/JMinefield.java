@@ -102,8 +102,8 @@ public class JMinefield extends JPanel implements MouseListener{
 							b.setText("");
 							b.setForeground(Color.BLACK);
 						}
-						b.setBackground(Color.decode("#d3d3d3"));
-						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
+						b.setBackground(Color.decode("#dedede"));
+						b.setBorder(BorderFactory.createLineBorder(Color.decode("#cccccc"), 1));
 					} else {
 						b.setBackground(Color.decode("#c7c7c7"));
 						b.setBorder(BorderFactory.createLineBorder(Color.decode("#e0e0e0"), 1));
