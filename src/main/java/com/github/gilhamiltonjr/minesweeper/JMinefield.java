@@ -1,3 +1,5 @@
+package com.github.gilhamiltonjr.minesweeper;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;

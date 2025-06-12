@@ -1,3 +1,4 @@
+package com.github.gilhamiltonjr.minesweeper;
 
 public class Square {
 	

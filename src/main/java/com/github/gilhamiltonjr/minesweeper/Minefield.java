@@ -1,3 +1,5 @@
+package com.github.gilhamiltonjr.minesweeper;
+
 import java.util.ArrayList;
 import java.util.List;
 
