@@ -49,10 +49,10 @@ public class JMinefield extends JPanel implements MouseListener{
 				updateButtons();
 				if(minefield.isGameWon()) {
 					minefield.setGameOver(true);
-					JOptionPane.showMessageDialog(JMinefield.this, "You Win!");
+					JOptionPane.showMessageDialog(JMinefield.this, "You Win! 3Bv: " + minefield.getMinimumClicksToSolve().size());
 				}
 				else if(minefield.getIsGameOver()) {
-					JOptionPane.showMessageDialog(JMinefield.this, "Game Over!");
+					JOptionPane.showMessageDialog(JMinefield.this, "Game Over! 3Bv: " + minefield.getMinimumClicksToSolve().size());
 				//} else if(minefield.getFlaggedMineCount() == minefield.getMineCount()) {
 				//	System.out.println("Game Won");
 				}

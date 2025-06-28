@@ -7,28 +7,31 @@ public class Minefield {
 	private List<Square> squares;
 	private int width;
 	private int height;
+	private final int desiredMineCount;
 	private int mines;
 	private List<GameListener> gameListeners;
 	private boolean isGameOver;
 	private int flaggedMines;
 	private int unrevealedSquares;
 	
-	
+	public record Coordinate(int x, int y) {}
+
 	public Minefield(int width, int height, int mines) {
-		
-		squares = new ArrayList<Square>(width*height);
+
+		squares = new ArrayList<>(width * height);
 		this.width = width;
 		this.height = height;
-		this.mines = mines;
+		this.desiredMineCount = mines;
+		this.mines = 0;
 		this.flaggedMines = 0;
 		this.unrevealedSquares = width*height;
 		this.isGameOver = false;
 		this.gameListeners = new ArrayList<>();
-		
+
 		for(int i = 0; i < width*height; i++) {
 			squares.add(new Square(false));
 		}
-		
+
 	}
 	public int getNeighborsCount(int x, int y) {
 		int count = 0;
@@ -121,40 +124,47 @@ public class Minefield {
 		//reveal all adjecent tiles that arent flaged reguardless of if they are bombs or not
 		//getSquare(x-1,y).setFlagged(true);
 		if(getNeighborsFlagCount(x,y) == getNeighborsCount(x,y)) {
-			for(int r = -1; r <= 1; r++) {
-				for(int c= -1; c <= 1; c ++) {
-					if(r != 0 || c != 0) {
-						//System.out.println("choord");
-//						getSquare(x+r,y+c).setRevealed(true);
-//						gameUpdated();
-						doReveal(x+r,y+c);
-					}
-				}
+			for (Coordinate neighbor : neighbors(x, y)) {
+				doReveal(neighbor.x, neighbor.y);
 			}
 		}
 		gameUpdated();
 	}
-	
+
+	private int xyToIndex(int x, int y) {
+		return y * width + x;
+	}
+
 	public void firstReveal(int x, int y) {
-		int placedMines = 0;
-		while(placedMines < mines) {
-			
+		while(mines < desiredMineCount) {
 			int randX = (int)(Math.random()* width);
 			int randY = (int)(Math.random()* height);
-			Square square = squares.get(randY * width + randX);
-			
+			Square square = squares.get(xyToIndex(randX, randY));
+
 			if(!square.isBombSquare() && (Math.abs(x-randX) > 1 || Math.abs(y-randY) > 1)) {
-				square.setBombSquare(true);
-				placedMines++;
+				placeMine(randX, randY);
 			}
 		}
 		reveal(x,y);
 	}
-	
+
+	public void placeMine(Coordinate coord) {
+		placeMine(coord.x, coord.y);
+	}
+
+	public void placeMine(int x, int y) {
+		Square square = squares.get(xyToIndex(x, y));
+		if (square.isBombSquare()) {
+			return;
+		}
+		square.setBombSquare(true);
+		mines++;
+	}
+
 	public Square getSquare(int x, int y) {
 		return (squares.get(y*width + x));
 	}
-	
+
 	public void addGameListener(GameListener l) {
 		gameListeners.add(l);
 	}
@@ -175,13 +185,10 @@ public class Minefield {
 	public int getMineCount() {
 		return mines;
 	}
-	public int getUnrevealedSquares() {
-		return unrevealedSquares;
-	}
 	public void setGameOver(boolean state) {
 		this.isGameOver = state;
 	}
-	public void setQuestion(int x,int y, boolean state) {
+	public void setQuestion(int x, int y, boolean state) {
 		getSquare(x,y).setQuestion(state);
 		gameUpdated();
 	}
@@ -194,5 +201,64 @@ public class Minefield {
 			flaggedMines--;
 		}
 		gameUpdated();
+	}
+
+	public List<Coordinate> getMinimumClicksToSolve() {
+		var clicks = new ArrayList<Coordinate>();
+		boolean[] marked = new boolean[squares.size()];
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				int index = xyToIndex(x, y);
+				if (squares.get(index).isBombSquare() || marked[index] || getNeighborsCount(x, y) != 0) {
+					continue;
+				}
+
+				marked[index] = true;
+				clicks.add(new Coordinate(x, y));
+				floodFillAndMark(x, y, marked);
+			}
+		}
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				int index = xyToIndex(x, y);
+				if (!marked[index] && !squares.get(index).isBombSquare()) {
+					clicks.add(new Coordinate(x, y));
+				}
+			}
+		}
+
+		return clicks;
+	}
+
+	private void floodFillAndMark(int x, int y, boolean[] marked) {
+		for (Coordinate neighbor : neighbors(x, y)) {
+			int index = xyToIndex(neighbor.x, neighbor.y);
+			if (marked[index]) {
+				continue;
+			}
+
+			marked[index] = true;
+			if (!squares.get(index).isBombSquare() && getNeighborsCount(neighbor.x, neighbor.y) == 0) {
+				floodFillAndMark(neighbor.x, neighbor.y, marked);
+			}
+		}
+	}
+
+	private Iterable<Coordinate> neighbors(int x, int y) {
+		var neighbors = new ArrayList<Coordinate>(8);
+		for (int r = -1; r <= 1; r++) {
+			for (int c = -1; c <= 1; c++) {
+				if (r != c || c != 0) {
+					int newX = x + r;
+					int newY = y + c;
+					if (newX >= 0 && newX < width && newY >= 0 && newY< height) {
+						neighbors.add(new Coordinate(x + r, y + c));
+					}
+				}
+			}
+		}
+		return neighbors;
 	}
 }
